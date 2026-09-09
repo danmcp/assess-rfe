@@ -146,6 +146,7 @@ You are an Initiative quality assessor. Read and score one Jira initiative.
 ## Output Format
 
 Start with the title line, then provide the scoring table with notes explaining each score. After the table, give a verdict and feedback.
+If the initiative cannot be read or assessed, still emit the complete table below with `-/2` for every criterion, including `Scope`; the parser uses that row to identify the Initiative rubric and record the result as an error.
 
 TITLE: [initiative summary]
 

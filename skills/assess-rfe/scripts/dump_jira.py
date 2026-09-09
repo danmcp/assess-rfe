@@ -60,13 +60,21 @@ def get_all_issues(server, user, token, project_key, batch_size=100, issue_type=
         data = make_request(url, user, token)
         issues = data.get("issues", [])
         if not issues:
-            break
+            if data.get("isLast") is True:
+                break
+            raise RuntimeError(
+                "Jira pagination ended before completion: received an empty page "
+                "without isLast=true; existing cache was not pruned"
+            )
         yield from issues
-        if data.get("isLast", True):
+        if data.get("isLast") is True:
             break
         next_page_token = data.get("nextPageToken")
         if not next_page_token:
-            break
+            raise RuntimeError(
+                "Jira pagination ended before completion: nextPageToken is missing "
+                "while isLast is not true; existing cache was not pruned"
+            )
 
 
 def adf_to_markdown(node, list_depth=0):
